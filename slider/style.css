@@ -1,0 +1,31 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container{
+    width: fit-content;
+    margin: auto;
+    display: flex;
+}
+
+.slider{
+    width: 600px;
+    justify-content: center; 
+       overflow: scroll;
+}
+
+.slides{
+    width: fit-content;
+    border: 2px solid red;
+    display: flex;
+    transition: all 0.5s;
+}
+
+.sli{
+    width: 600px;
+}
+
+
+
