@@ -1,19 +1,24 @@
  
 let streamtype = JSON.parse(localStorage.getItem("streamtype"));
+let filter_array = JSON.parse(localStorage.getItem("filter_array")) || [];
 
 let n=1;
 
 
 let api_key = `?api_key=2254f6a103ea45b2d2965212918395da`;
 let base_url = `https://api.themoviedb.org/3/`;
-let end_point =  `discover/${streamtype ? streamtype : `tv`}`
+let end_point =  `discover/${streamtype ? streamtype : `movie`}`
 let img_path = `https://image.tmdb.org/t/p/w500`;
-let api_url = base_url+end_point+api_key;
+let e_pages = `&page=`;
+let e_page = 1;
+let w_genre = `&with_genres=${filter_array.join(',')}`;
+let e_lang = '&with_original_language=ta'
+let api_url = base_url+end_point+api_key+w_genre+e_pages+e_page;
 
 
 
 const getMovies = (api_url) => {
-   fetch(`${api_url}&page=1`)
+   fetch(api_url)
    .then((res) => {
       return res.json()
    })
@@ -26,10 +31,6 @@ const getMovies = (api_url) => {
 getMovies(api_url);
 
 
-
-
-
-
 // streaming type 
 
 function stream(){
@@ -40,6 +41,9 @@ function stream(){
             console.log(ele.value);
             localStorage.setItem("streamtype", JSON.stringify(ele.value))
             getMovies(base_url+`discover/${ele.value}`+api_key);
+
+            location.reload();
+
       }
    
    })
@@ -53,32 +57,29 @@ function stream(){
 
 
 
- fetch(`
-https://api.themoviedb.org/3/genre/movie/list?api_key=2254f6a103ea45b2d2965212918395da&include_adult=false&include_video=false&language=en-US`)
+ fetch(`${base_url}genre/${streamtype}/list${api_key}`)
  .then((res) => {
     return res.json()
  })
  .then((data) => {
-   console.log(data.genres);
+   console.log(data);
    showGenres(data.genres)
  })
 
 
 
  function page(n){
-   fetch(`https://api.themoviedb.org/3/discover/movie?api_key=2254f6a103ea45b2d2965212918395da&include_adult=false&include_video=false&language=en-US&page=${n}`)
-   .then((res) => {
-      return res.json()
-   })
-   .then((data) => {
-      console.log(data.page);
-      totalPage(data.page);
-      showMovies(data.results);
-   })
+   let page_url = base_url+end_point+api_key+w_genre+e_pages+n
+   getMovies(page_url)
  }
 
 
 
+ function eachMovie(id)
+ {
+   localStorage.setItem("movie_id", JSON.stringify(id));
+   location.href = "movie.html"
+ }
 
  function showMovies(data){
    document.getElementById("allmovies").innerHTML = "";
@@ -90,7 +91,7 @@ https://api.themoviedb.org/3/genre/movie/list?api_key=2254f6a103ea45b2d296521291
                     <div class="card-body p-1 bg-black text-white">
                      <p><span class="badge text-bg-secondary">${ele.vote_average}</span></p>
                       <h6 class="card-title">${ele.title || ele.name}</h6>
-                      <a href="#" class="btn btn-warning btn-sm">view more</a>
+                      <button onclick="eachMovie(${ele.id})" class="btn btn-warning btn-sm">view more</button>
                     </div>
                   </div>
             </div>
@@ -118,13 +119,35 @@ https://api.themoviedb.org/3/genre/movie/list?api_key=2254f6a103ea45b2d296521291
 
 // }
 
+function addFilter(id)
+{
+   if(filter_array.length !=0)
+   {
+      if(filter_array.includes(id))
+      {
+         let ind = filter_array.indexOf(id)
+         filter_array.splice(ind, 1)
+      }
+      else{
+         filter_array.push(id)
+      }
+   }
+   else{
+      filter_array.push(id);
+   }
+
+   
+   localStorage.setItem("filter_array", JSON.stringify(filter_array));
+   location.reload();
+}
+
 function showGenres(gen){
    document.getElementById("genres").innerHTML = "";
-gen.map((ele) => {
-   document.getElementById("genres").innerHTML +=`
-         <button class="btn btn-outline-warning btn-sm m-1">${ele.name}</button>
-   `
-})
+      gen.map((ele) => {
+         document.getElementById("genres").innerHTML +=`
+               <button class="btn ${filter_array.includes(ele.id) ? `btn-warning` : `btn-outline-warning`} btn-sm m-1" onclick="addFilter(${ele.id})">${ele.name}</button>
+         `
+      })
 
 }
 

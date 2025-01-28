@@ -63,37 +63,51 @@
              
             </div>
           </nav>
-
-          <div class="container">
-            <div id="genres" class="text-center">
-
-            </div>
-          </div>
     </header>
 
-    <div class="container my-4 border">
-        <div class="dropdown">
-          <a class="dropdown-toggle" data-bs-toggle="dropdown" >--Genre--</a>
-          <div class="dropdown-menu" id="genre">
-          </div>
-        </div>
-    </div>
-    
-    <div class="container my-5">
-        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3 " id="allmovies">
-            
-        </div>
-    </div>
 
-    <div class="container">
-        <nav aria-label="Page navigation example border">
-            <ul class="pagination mx-auto" style="width: fit-content;" id="pages">
-            
-            </ul>
-          </nav>
-    </div>
+    <section>
+        <div class="container" id="eachmovie">
+           
+        </div>
+    </section>
+
+    
 </body>
 
 <script src="index.js"></script>
+
+
+<script>
+
+let movie_id = JSON.parse(localStorage.getItem("movie_id"));
+let dom_eachmovie = document.getElementById("eachmovie");
+
+     fetch(`${base_url}movie/${movie_id}${api_key}`)
+ .then((res) => {
+    return res.json()
+ })
+ .then((data) => {
+   console.log(data);
+//    showGenres(data.genres)
+
+showEachMovie(data)
+ })
+
+function showEachMovie(data){
+    const {backdrop_path, poster_path} = data;
+    dom_eachmovie.innerHTML = `
+            <div class="row" style="background:url(https://image.tmdb.org/t/p/w500/${backdrop_path}), black;background-size:cover">
+                <div class="col-lg-4">
+                    <img src=${img_path+poster_path} class="img-thumbnail" alt="">
+                </div>
+            </div>
+`
+
+}
+
+
+
+</script>
 
 </html>
