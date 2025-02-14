@@ -67,9 +67,17 @@
 
 
     <section>
-        <div class="container" id="eachmovie">
-           
+        <div class="container-fluid my-5" id="eachmovie">
+          <div class="col-6"></div>
+          <div class="col-3"></div>
         </div>
+    </section>
+
+
+    <section>
+      <div class="container">
+        
+      </div>
     </section>
 
     
@@ -83,28 +91,98 @@
 let movie_id = JSON.parse(localStorage.getItem("movie_id"));
 let dom_eachmovie = document.getElementById("eachmovie");
 
-     fetch(`${base_url}movie/${movie_id}${api_key}`)
+fetch(`${base_url}movie/${movie_id}${api_key}`)
  .then((res) => {
     return res.json()
  })
  .then((data) => {
-   console.log(data);
-//    showGenres(data.genres)
-
-showEachMovie(data)
+showEachMovie(data);
+console.log(data)
+getmv()
+getmphoto()
  })
+
+
+ function getmv(){
+fetch(`${base_url}movie/${movie_id}/videos${api_key}`)
+ .then((res) => {
+    return res.json()
+ })
+ .then((data) => {
+    show_video(data.results)
+ })
+ }
+
+
+
+ function getmphoto(){
+      fetch(`${base_url}movie/${movie_id}/images${api_key}`)
+        .then((res) => {
+            return res.json()
+        })
+        .then((data) => {
+          console.log(data.posters);
+            // show_video(data.results)
+    })
+
+ }
+
+
+ function show_video(vid){
+
+    vid.map((v) => {
+        document.getElementById("vid").innerHTML += 
+    `
+      <div class="carousel-item active">
+          <iframe width="100%" height="auto" src="https://www.youtube.com/embed/${v.key}" title="${v.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+    `
+    })
+
+}
+
+
 
 function showEachMovie(data){
     const {backdrop_path, poster_path} = data;
     dom_eachmovie.innerHTML = `
-            <div class="row" style="background:url(https://image.tmdb.org/t/p/w500/${backdrop_path}), black;background-size:cover">
-                <div class="col-lg-4">
-                    <img src=${img_path+poster_path} class="img-thumbnail" alt="">
+            <div style="background:  url(https://image.tmdb.org/t/p/w1280/${backdrop_path}), linear-gradient(to right, black ,#000000cc ,#000000cc ) ; background-blend-mode:overlay; background-size:cover; background-position:center">
+              <div class="container p-5">
+                <div class="row">
+                  <div class="col-3">
+                        <img src=${img_path+poster_path} class="img-fluid rounded-2" alt="" style="box-shadow:0px 0px 5px 1px #00fff338">
+                    </div>
+                     <div class="col-6">
+                      </div>
+                     <div class="col-3">
+                      
+                        <div id="carouselExample" class="carousel slide">
+                          <div class="carousel-inner" id="vid">
+                              
+                          </div>
+
+                          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                          </button>
+                          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                          </button>
+                        </div>
+
+
+
+                      </div>
+
                 </div>
+              </div>
             </div>
 `
 
 }
+
+
 
 
 

@@ -12,7 +12,7 @@ let img_path = `https://image.tmdb.org/t/p/w500`;
 let e_pages = `&page=`;
 let e_page = 1;
 let w_genre = `&with_genres=${filter_array.join(',')}`;
-let e_lang = '&with_original_language=ta'
+let e_lang = '&with_original_language=hi'
 let api_url = base_url+end_point+api_key+w_genre+e_pages+e_page;
 
 
@@ -23,12 +23,24 @@ const getMovies = (api_url) => {
       return res.json()
    })
    .then((data) => {
-      console.log(data.results);
+      console.log(data);
       totalPage(data.page)
       showMovies(data.results);
    })
 }
 getMovies(api_url);
+
+
+
+
+
+
+document.getElementById("search").addEventListener("keyup", function(e){
+console.log(e.target.value)
+
+   let s_url = base_url+`search/movie`+api_key+`${e.target.value != "" ? `&query=${e.target.value}` : ``}`;
+   getMovies(s_url);
+})
 
 
 // streaming type 
@@ -54,6 +66,29 @@ function stream(){
 
 
 
+
+
+
+ fetch(`${base_url}configuration/languages${api_key}`)
+ .then((res) => {
+    return res.json()
+ })
+ .then((data) => {
+   console.log(data);
+   showLang(data)
+ })
+
+
+ function showLang(l){
+   document.getElementById("lang").innerHTML=""
+   l.map((ele) =>{
+         document.getElementById("lang").innerHTML +=`
+          <li><a class="dropdown-item" href="#">${ele.english_name
+          }</a></li>
+         `
+   })
+
+ }
 
 
 
