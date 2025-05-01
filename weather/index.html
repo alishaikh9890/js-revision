@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weather</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" ></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</head>
+<body>
+
+    <div class="container my-5">
+        <div class="input-group mb-3" style="width:400px">
+            <span class="input-group-text" id="basic-addon1"><i class="bi bi-geo-fill"></i></span>
+            <input type="text" class="form-control" placeholder="Enter city" aria-label="Username" aria-describedby="basic-addon1">
+          </div>
+        <div class="shadow rounded-4 p-4" style="max-width:600px" id="weather"></div>
+    </div>
+
+    <div class="container border border-warning" id="forcast"></div>
+    
+</body>
+<script>
+
+    const weather = document.querySelector("#weather");
+
+     let city = `london`
+
+     document.querySelector(".form-control").addEventListener("change", function(e){
+        city = e.target.value
+        console.log(e.target.value);
+
+    // let api_url = base_url+end_point+`?q=${city}`+key
+    let api_url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&mode=json&appid=d0eb85f816dcca901fd9dddf4cad3e17`
+        getData(api_url)
+    })
+
+   
+    // let base_url=`https://api.openweathermap.org/`;
+    // let end_point = `data/2.5/weather`;
+    // let key=`&appid=d0eb85f816dcca901fd9dddf4cad3e17`;
+
+    
+    // let api_url = base_url+end_point+`?q=${city}`+key
+
+    let api_url = `https://api.openweathermap.org/data/2.5/forecast?q=London&mode=json&appid=d0eb85f816dcca901fd9dddf4cad3e17`
+    
+
+ 
+    getData(api_url)
+
+    function getData(api_url){
+        fetch(api_url)
+        .then((res) => res.json())
+        .then((res) => {
+            console.log(res);
+            showWeather(res.list)
+        })
+
+        
+    }
+
+   
+
+function showWeather(data){
+
+    weather.innerHTML = ""
+
+    data.map((ele) => {
+
+  
+    weather.innerHTML += `
+        <div class="row g-2 shadow my-2 rounded-2 p-3">
+            <div class="col-6 position-relative">
+
+                <span class="badge text-bg-dark bg-success">${ele.dt_txt}</span>
+                <div>
+                    <img class="img-fluid" src="http://openweathermap.org/img/w/${ele.weather[0].icon}.png" alt="" /> 
+                    <br/> 
+                    <strong>${ele.weather[0].main}</strong>  
+                </div>
+            </div>    
+            <div class="col-6">
+                <div>
+                    <h4>${ele.name}</h4>  
+                    <span>${ele.weather[0].description}</span>
+                </div>
+            </div>    
+            <div class="col-6">
+                <div>
+                    <i class="bi bi-wind me-2"></i>
+                    <span>${ele.wind.speed} m/s</span>  
+                </div>
+            </div>    
+            <div class="col-6">
+                <div>
+                    <i class="bi bi-thermometer-sun me-2"></i>
+                    <span>${parseFloat(ele.main.temp-273.15).toFixed(2)}</span>
+                </div>
+            </div>    
+
+            
+        </div>
+    `
+})
+}
+
+    
+
+</script>
+</html>
